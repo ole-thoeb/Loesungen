@@ -17,18 +17,20 @@ public class LinkedStackList<T> implements StackList<T> {
 	LinkedStackList(Collection<? extends T> c) {
 		addAll(c);
 	}
-
+	
 	@Override
-	public boolean remove(Object o) {
-		for (Node<T> cur = head; cur != null; cur = cur.getNext()) {
-			if (o == cur.getValue() || (o != null && o.equals(cur.getValue()))) {
-				unLink(cur);
-				return true;
-			}
-		}
-		return false;
+	public void push(T element) {
+		add(0, element);
 	}
 
+	@Override
+	public T pop() {
+		if (isEmpty()) {
+			throw new NoSuchElementException();
+		}
+		return unLink(head);
+	}
+	
 	private T unLink(Node<T> node) {
 		if (node == head) {
 			head = node.getNext();
@@ -64,6 +66,52 @@ public class LinkedStackList<T> implements StackList<T> {
 			tail = newNode;
 		}
 		size++;
+	}
+	
+	@Override
+	public boolean add(T e) {
+		linkLast(e);
+		return true;
+	}
+
+	@Override
+	public void add(int index, T element) {
+		checkPositionIndex(index);
+		if (index == size()) add(element);
+		else linkBefore(element, nodeAt(index));
+	}
+	
+	private Node<T> nodeAt(int index) {
+		checkElementIndex(index);
+		Node<T> cur = head;
+		for (int i = 0; i < index; i++) {
+			System.out.println(i);
+			cur = cur.getNext();
+		}
+		return cur;
+	}
+
+	@Override
+	public String toString() {
+		StringBuffer buffer = new StringBuffer();
+		buffer.append('(');
+		for (Node<T> cur = head; cur != null; cur = cur.getNext()) {
+			buffer.append(cur.getValue().toString());
+			if (cur.getNext() != null) buffer.append(", ");
+		}
+		buffer.append(')');
+		return buffer.toString();
+	}
+
+	@Override
+	public boolean remove(Object o) {
+		for (Node<T> cur = head; cur != null; cur = cur.getNext()) {
+			if (o == cur.getValue() || (o != null && o.equals(cur.getValue()))) {
+				unLink(cur);
+				return true;
+			}
+		}
+		return false;
 	}
 
 	@Override
@@ -172,16 +220,6 @@ public class LinkedStackList<T> implements StackList<T> {
 	@Override
 	public ListIterator<T> listIterator(int index) {
 		return null;
-	}
-
-	private Node<T> nodeAt(int index) {
-		checkElementIndex(index);
-		Node<T> cur = head;
-		for (int i = 0; i < index; i++) {
-			System.out.println(i);
-			cur = cur.getNext();
-		}
-		return cur;
 	}
 
 	private class ListIter implements ListIterator<T> {
@@ -349,19 +387,6 @@ public class LinkedStackList<T> implements StackList<T> {
 		checkElementIndex(index);
 		return nodeAt(index).getValue();
 	}
-	
-	@Override
-	public boolean add(T e) {
-		linkLast(e);
-		return true;
-	}
-
-	@Override
-	public void add(int index, T element) {
-		checkPositionIndex(index);
-		if (index == size()) add(element);
-		else linkBefore(element, nodeAt(index));
-	}
 
 	@Override
 	public LinkedStackList<T> subList(int fromIndex, int toIndex) {
@@ -379,31 +404,6 @@ public class LinkedStackList<T> implements StackList<T> {
 			cur = cur.getNext();
 		}
 		return retList;
-	}
-
-	@Override
-	public void push(T element) {
-		add(0, element);
-	}
-
-	@Override
-	public T pop() {
-		if (isEmpty()) {
-			throw new NoSuchElementException();
-		}
-		return unLink(head);
-	}
-
-	@Override
-	public String toString() {
-		StringBuffer buffer = new StringBuffer();
-		buffer.append('(');
-		for (Node<T> cur = head; cur != null; cur = cur.getNext()) {
-			buffer.append(cur.getValue().toString());
-			if (cur.getNext() != null) buffer.append(", ");
-		}
-		buffer.append(')');
-		return buffer.toString();
 	}
 
     private boolean isElementIndex(int index) {
